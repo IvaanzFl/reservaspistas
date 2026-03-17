@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Reserva::class],
-    version = 4
+    version = 5
 )
 //si se hace algun cambio al codigo y no permite
 // visualizar lo mas probable es que toca cambiar la version del database
