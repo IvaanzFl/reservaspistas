@@ -160,7 +160,23 @@ fun ReservaScreen(
     }
 
     if (mostrarDatePicker) {
-        val dateState = rememberDatePickerState()
+        // Lógica para que el calendario se abra en la fecha ya guardada si estamos editando
+        val initialDateMillis = remember(fecha) {
+            if (fecha.isNotEmpty()) {
+                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                sdf.timeZone = TimeZone.getTimeZone("UTC")
+                try {
+                    sdf.parse(fecha)?.time
+                } catch (e: Exception) {
+                    System.currentTimeMillis()
+                }
+            } else {
+                System.currentTimeMillis()
+            }
+        }
+
+        val dateState = rememberDatePickerState(initialSelectedDateMillis = initialDateMillis)
+
         DatePickerDialog(
             onDismissRequest = { mostrarDatePicker = false },
             confirmButton = {
@@ -180,7 +196,20 @@ fun ReservaScreen(
     }
 
     if (mostrarTimePicker) {
-        val timeState = rememberTimePickerState()
+        // Lógica para que el reloj se abra en la hora ya guardada si estamos editando
+        val initialHour = remember(hora) {
+            if (hora.contains(":")) hora.split(":")[0].toIntOrNull() ?: 0 else 12
+        }
+        val initialMinute = remember(hora) {
+            if (hora.contains(":")) hora.split(":")[1].toIntOrNull() ?: 0 else 0
+        }
+
+        val timeState = rememberTimePickerState(
+            initialHour = initialHour,
+            initialMinute = initialMinute,
+            is24Hour = true
+        )
+
         AlertDialog(
             onDismissRequest = { mostrarTimePicker = false },
             confirmButton = {
